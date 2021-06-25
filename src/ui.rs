@@ -17,10 +17,7 @@ const BG_COLOR: Color = Color::grey8(0x80);
 impl ListIter<(AppData, Mod, bool)> for AppData {
     fn for_each(&self, mut cb: impl FnMut(&(AppData, Mod, bool), usize)) {
         for (i, item) in self.enabled_mods.iter().enumerate() {
-            cb(
-                &(self.clone(), self.modlist.mods[i].clone(), item.to_owned()),
-                i,
-            )
+            cb(&(self.clone(), self.modlist[i].clone(), item.to_owned()), i)
         }
     }
 
@@ -28,7 +25,7 @@ impl ListIter<(AppData, Mod, bool)> for AppData {
         let self_clone = self.clone();
 
         for (i, item) in self.enabled_mods.iter_mut().enumerate() {
-            let mut data = (self_clone.clone(), self.modlist.mods[i].clone(), *item);
+            let mut data = (self_clone.clone(), self.modlist[i].clone(), *item);
             cb(&mut data, i);
 
             // Update this mod's enabled status
@@ -67,7 +64,7 @@ pub fn ui_builder() -> impl Widget<AppData> {
             .with_child(Checkbox::new("").lens(ModLens))
             .with_child(
                 Label::new(|(_, m, _): &(AppData, Mod, bool), _: &Env| m.name.clone()).on_click(
-                    |_, (a, m, _), _| a.selected_mod = a.modlist.mods.iter().position(|x| x == m),
+                    |_, (a, m, _), _| a.selected_mod = a.modlist.iter().position(|x| x == m),
                 ),
             )
             .padding(LABEL_SPACING)
@@ -85,7 +82,7 @@ pub fn ui_builder() -> impl Widget<AppData> {
     // build information panel for selected mod
     let modinfo_panel = Label::new(|data: &AppData, _env: &Env| {
         if let Some(index) = data.selected_mod {
-            if let Some(m) = data.modlist.mods.get(index) {
+            if let Some(m) = data.modlist.get(index) {
                 return format! {"Name: {}\nAuthor: {}\n\n{}", m.name, m.author, m.description};
             }
         }
@@ -150,7 +147,7 @@ fn apply_enabled_mods(data: &mut AppData) {
         .iter()
         .enumerate()
         .filter(|(_, enabled)| **enabled)
-        .map(|(i, _)| &modlist.mods[i])
+        .map(|(i, _)| &modlist[i])
         .collect::<Vec<&Mod>>();
 
     if enabled_mods.is_empty() {

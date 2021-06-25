@@ -42,6 +42,14 @@ pub struct ModList {
     pub mods: Vec<Mod>,
 }
 
+impl std::ops::Deref for ModList {
+    type Target = Vec<Mod>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.mods
+    }
+}
+
 // TOOD: Consider not needing PartialEq
 #[derive(Debug, Data, Clone, PartialEq, Lens, Deserialize)]
 pub struct Mod {
