@@ -41,7 +41,7 @@ pub fn main() {
     // Get config from command line args
     let config = Config::parse_args(env::args());
 
-    let main_window = WindowDesc::new(ui::ui_builder)
+    let main_window = WindowDesc::new(ui::ui_builder())
         .title(LocalizedString::new(WINDOW_TITLE).with_placeholder("Chum Bucket Lab"));
 
     if config.check_update {
@@ -56,7 +56,7 @@ pub fn main() {
 
     AppLauncher::with_window(main_window)
         .delegate(ui::Delegate)
-        .use_simple_logger()
+        .log_to_console()
         .launch(AppData::new(modlist))
         .expect("launch failed");
 }
