@@ -63,9 +63,10 @@ pub fn ui_builder() -> impl Widget<AppData> {
         Flex::row()
             .with_child(Checkbox::new("").lens(ModLens))
             .with_child(
-                Label::new(|(_, m, _): &(AppData, Mod, bool), _: &Env| m.name.clone()).on_click(
-                    |_, (a, m, _), _| a.selected_mod = a.modlist.iter().position(|x| x == m),
-                ),
+                Label::new(|(_, m, _): &(AppData, Mod, bool), _: &Env| m.name.to_string())
+                    .on_click(|_, (a, m, _), _| {
+                        a.selected_mod = a.modlist.iter().position(|x| x == m)
+                    }),
             )
             .padding(LABEL_SPACING)
     }))
